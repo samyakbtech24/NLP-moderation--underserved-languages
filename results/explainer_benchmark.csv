@@ -1,0 +1,4 @@
+Method,GPU ms,CPU ms,Comprehensiveness ↑,Sufficiency ↓
+Integrated Gradients,350.1,563.5,0.335,0.021
+LIME,1784.5,3229.9,0.41,-0.02
+Random words,,,0.057,0.307

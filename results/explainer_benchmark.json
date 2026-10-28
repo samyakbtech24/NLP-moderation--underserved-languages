@@ -1,0 +1,82 @@
+{
+  "hardware": {
+    "gpu": "Apple M3 GPU (MPS), 24 GB unified memory, 8-core CPU",
+    "cpu_threads": 4
+  },
+  "config": {
+    "ig_n_steps": 32,
+    "lime_num_samples": 500,
+    "k_fraction": 0.2,
+    "agreement_top_k": 5,
+    "seed": 42
+  },
+  "n_items": 152,
+  "latency": {
+    "prediction_only": {
+      "gpu": {
+        "mean_ms": 25.3,
+        "median_ms": 10.9,
+        "p95_ms": 148.6,
+        "n": 20
+      },
+      "cpu": {
+        "mean_ms": 29.8,
+        "median_ms": 26.8,
+        "p95_ms": 49.7,
+        "n": 20
+      }
+    },
+    "integrated_gradients": {
+      "gpu": {
+        "mean_ms": 350.1,
+        "median_ms": 244.4,
+        "p95_ms": 867.8,
+        "n": 152
+      },
+      "cpu": {
+        "mean_ms": 563.5,
+        "median_ms": 314.0,
+        "p95_ms": 2134.4,
+        "n": 20
+      }
+    },
+    "lime": {
+      "gpu": {
+        "mean_ms": 1784.5,
+        "median_ms": 1241.3,
+        "p95_ms": 4612.7,
+        "n": 152
+      },
+      "cpu": {
+        "mean_ms": 3229.9,
+        "median_ms": 1558.5,
+        "p95_ms": 12568.9,
+        "n": 20
+      }
+    }
+  },
+  "agreement_top5": {
+    "all": 0.699,
+    "min_10_words": 0.572,
+    "per_language": {
+      "bn": 0.689,
+      "hi": 0.679,
+      "kn": 0.8,
+      "mr": 0.626
+    }
+  },
+  "faithfulness": {
+    "ig": {
+      "comprehensiveness": 0.335,
+      "sufficiency": 0.021
+    },
+    "lime": {
+      "comprehensiveness": 0.41,
+      "sufficiency": -0.02
+    },
+    "random": {
+      "comprehensiveness": 0.057,
+      "sufficiency": 0.307
+    }
+  }
+}
