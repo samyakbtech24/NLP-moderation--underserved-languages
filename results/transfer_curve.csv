@@ -1,0 +1,7 @@
+condition,n_target_examples,target_macro_f1,pct_of_pooled,f1_kn/dravidian_kn,f1_kn/macd
+B1_zero_shot,0,0.7359,85.8,0.6155,0.7413
+B2_few_shot_100,100,0.7771,90.6,0.6459,0.783
+B3_few_shot_500,500,0.7984,93.0,0.6681,0.8026
+B4_few_shot_2000,2000,0.8207,95.6,0.7108,0.8243
+B5_monolingual,24221,0.8599,100.2,0.7908,0.8619
+A_pooled_all,24221,0.8581,100.0,0.7883,0.86

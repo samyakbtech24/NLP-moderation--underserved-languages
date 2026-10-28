@@ -1,0 +1,22 @@
+{
+  "overall": 0.8728204880516961,
+  "per_language": {
+    "hi": 0.8592274821182655,
+    "kn": 0.854407904311888,
+    "mr": 0.9049440531228037,
+    "bn": 0.8962103596695197
+  },
+  "per_source": {
+    "bn/bengali_hs": 0.8962103596695197,
+    "hi/macd": 0.8592274821182655,
+    "kn/dravidian_kn": 0.7466695011337869,
+    "kn/macd": 0.8587992375415263,
+    "mr/mahahate": 0.9049440531228037
+  },
+  "model": "xlm-roberta-base",
+  "run": "xlmr_pooled",
+  "n_train": 97793,
+  "best_val_macro_f1": 0.8771066233979414,
+  "train_minutes": 31.9,
+  "seed": 42
+}

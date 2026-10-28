@@ -43,10 +43,17 @@ NLP-moderation--underserved-languages/
 |   |-- DravidianCodeMix/       <- Kannada code-mixed in Roman script
 ```
 
-Notebooks to be added as work progresses:
-- `02_train.ipynb`        -- TF-IDF baseline + MuRIL fine-tuning (P2)
-- `03_explain_eval.ipynb` -- Integrated Gradients + LIME benchmark (P3)
-- `app.py`                -- FastAPI + Gradio demo (P3)
+P2 notebook (Colab cells, same format as Notebook 1):
+- `02_train.ipynb`        -- open this in Colab (File → Upload notebook); generated from 02_train.py
+- `02_train.py`           -- TF-IDF baseline, MuRIL fine-tuning, transfer B1-B5, XLM-R (P2)
+
+P3 files:
+- `fairmod_explain.py`    -- classifier + Integrated Gradients, shared by notebook 3 and the app
+- `03_explain_eval.ipynb` -- open this in Colab; generated from 03_explain_eval.py
+- `03_explain_eval.py`    -- IG vs LIME benchmark, word-boundary check, error-analysis export
+- `app.py`                -- FastAPI + Gradio demo (one process)
+- `test_app.py`           -- app edge-case tests (local or against the live Space)
+- `requirements.txt`, `hf_space_README.md` -- HuggingFace Spaces deployment
 
 ---
 
@@ -100,23 +107,86 @@ Cell 14 prints rows labelled as abusive, the native Kannada speaker must confirm
 they actually look offensive. This is mandatory. After running, paste the output
 of Cell 17 into the team chat for the record.
 
-### Step 4: TF-IDF baseline (P2)
+### Step 4: TF-IDF baseline (P2) -- DONE
 
-After 01_data_preparation.py completes, load the output train.csv and val.csv
-from Google Drive. Train a TF-IDF + Logistic Regression model per language.
-Report macro-F1 for each language. Save to results/baseline_results.json.
-These numbers are Column 1 of Table I in the paper.
+02_train.py Part A (Cells 1-6, no GPU). One TF-IDF char 2-5-gram + Logistic
+Regression model per language, class_weight='balanced'. Results are in
+results/baseline_results.json. These numbers are Column 1 of Table I:
 
-### Step 5: MuRIL fine-tuning (P2)
+| Language | Val macro-F1 | Test macro-F1 |
+|---|---|---|
+| Hindi | 0.8415 | 0.8369 |
+| Kannada | 0.8515 | 0.8441 |
+| -- Kannada / MACD (native script) | 0.8538 | 0.8456 |
+| -- Kannada / DravidianCodeMix (Roman) | 0.7702 | 0.7817 |
+| Marathi | 0.8908 | 0.8924 |
+| Bengali | 0.8832 | 0.8864 |
+| Overall | 0.8615 | 0.8582 |
 
-Fine-tune google/muril-base-cased on the pooled multilingual training set.
-Exact training settings are in FairMod_Master_Context.md Section 5.2.
-Use class-weighted loss (Bengali is 2:1 imbalanced). Save the checkpoint to Drive.
+The baseline is strong, so MuRIL has to clear about 0.84-0.89. Report the gap
+honestly whatever it turns out to be (master context Section 1.6).
 
-### P3: Gradio interface skeleton (can start now, in parallel)
+### Step 5: MuRIL fine-tuning (P2) -- code ready, run on Colab T4
 
-Build a minimal Gradio interface with a text box and a fake classifier returning
-random results. Wire it to the real model on Day 2 when P2 has a checkpoint.
+02_train.py Part B (Cells 7-10, ~45 min). Uses the confirmed Section 5.2 settings
+with class-weighted loss. It picks the best epoch by val macro-F1 and saves the
+model to checkpoints/muril_pooled/final, which P3 loads.
+
+### Step 6 / 6b: Transfer B1-B5 + XLM-R (P2) -- code ready
+
+02_train.py Part C (Cells 11-13, ~2.5 h): the target is Kannada. Few-shot sets
+are nested (100 in 500 in 2000) and stratified by source and label. B1-B4 choose
+checkpoints on non-Kannada val only, so Kannada labels never leak in through model
+selection. Outputs: transfer_results.json, transfer_curve.csv and .png (Figure 2).
+Part D (Cells 14-16): xlm-roberta-base run, then results/table_I.csv.
+Each run saves as soon as it finishes. After a Colab disconnect, re-run the setup
+cells and runs that already finished are skipped.
+
+### P3: Explainer, app, deployment -- code ready, needs the MuRIL checkpoint
+
+All P3 code was tested end to end on CPU with an *untrained* MuRIL (real
+tokenizer, random classifier head). That checks that the code runs and that
+words are split correctly in all four scripts. It says nothing about accuracy.
+
+**Step 7: IG + LIME benchmark (03_explain_eval.py, Colab T4, ~25 min).**
+Upload fairmod_explain.py to MyDrive/fairmod/code/ once, then run the cells in order.
+- Cell 5 is the mandatory word-boundary check. The native Kannada speaker fills
+  the native_speaker_ok column in results/word_boundary_check.csv. At least the
+  3 Kannada-script items are required.
+- Cells 6-11 produce the Experiment C table (results/explainer_benchmark.*):
+  latency on GPU and CPU, IG-LIME top-5 agreement, comprehensiveness and
+  sufficiency, each compared against random words.
+- Cell 12 exports 20 Kannada errors with their top IG words for Step 12
+  (results/error_analysis_kn.csv).
+
+Things found while testing, worth a line in the paper:
+- MuRIL has no emoji in its vocabulary. Every emoji becomes the same [UNK]
+  token, so emoji are kept but carry almost no signal.
+- Bengali text contains zero-width joiners (U+200C). The tokenizer drops them,
+  and words are still mapped correctly.
+- Words are found by splitting on whitespace, not with regex `\w`. Python treats
+  Indic vowel signs as non-word characters, so `\w` would cut words in half.
+
+**Step 8: app.py.** One FastAPI process with Gradio mounted at `/`.
+`POST /classify` returns `{label, confidence, word_scores}`. `GET /health` is a
+status check. `/docs` has the API docs (a free screenshot for the paper).
+Tab 1 shows a single comment with red/blue word highlights. Tab 2 takes a CSV
+upload and ranks the comments. To run locally:
+`MODEL_ID=<checkpoint folder> python app.py` and open http://localhost:7860.
+`python test_app.py` runs the checklist edge cases: empty input, 3000
+characters, emoji only, wrong language.
+
+**Step 10: deploy to HuggingFace Spaces (~45 min).**
+1. Run 03_explain_eval.py Cell 13. It uploads the checkpoint to a private HF
+   model repo, e.g. `yourname/fairmod-muril`.
+2. On huggingface.co, create a new Space: SDK Gradio, hardware CPU Basic (free).
+3. Upload `app.py`, `fairmod_explain.py`, `requirements.txt`, and
+   `hf_space_README.md` renamed to `README.md`.
+4. Go to Space settings, Variables and secrets. Add the variable
+   `MODEL_ID = yourname/fairmod-muril` and the secret `HF_TOKEN = <read token>`.
+5. Wait for the build, then run
+   `SPACE_URL=https://<user>-<space>.hf.space python test_app.py`.
+   Note the CPU latency it prints; that is the real NGO deployment number.
 
 ### P4: Write the paper now (not on Day 3)
 

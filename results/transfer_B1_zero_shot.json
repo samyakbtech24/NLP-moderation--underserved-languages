@@ -1,0 +1,22 @@
+{
+  "overall": 0.83649339740223,
+  "per_language": {
+    "hi": 0.862653930511464,
+    "kn": 0.7358786610878661,
+    "mr": 0.9110955424045123,
+    "bn": 0.9002877053172005
+  },
+  "per_source": {
+    "bn/bengali_hs": 0.9002877053172005,
+    "hi/macd": 0.862653930511464,
+    "kn/dravidian_kn": 0.6154704188095816,
+    "kn/macd": 0.7413308506176011,
+    "mr/mahahate": 0.9110955424045123
+  },
+  "model": "google/muril-base-cased",
+  "run": "transfer_B1_zero_shot",
+  "n_train": 73572,
+  "best_val_macro_f1": 0.8880608692561774,
+  "train_minutes": 20.5,
+  "seed": 42
+}
