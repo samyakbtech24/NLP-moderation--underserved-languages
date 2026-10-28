@@ -142,11 +142,33 @@ Part D (Cells 14-16): xlm-roberta-base run, then results/table_I.csv.
 Each run saves as soon as it finishes. After a Colab disconnect, re-run the setup
 cells and runs that already finished are skipped.
 
-### P3: Explainer, app, deployment -- code ready, needs the MuRIL checkpoint
+### P3: Explainer, app, deployment -- benchmark DONE, app running locally, Space not yet deployed
 
-All P3 code was tested end to end on CPU with an *untrained* MuRIL (real
-tokenizer, random classifier head). That checks that the code runs and that
-words are split correctly in all four scripts. It says nothing about accuracy.
+**Experiment C results** (results/explainer_benchmark.json). There are 152 test
+items, 19 per language x label. Hardware: Apple M3 laptop, using the "GPU" =
+MPS GPU and the CPU (4 threads). A T4 GPU number would need a Colab run of the
+notebook.
+
+| Method | GPU ms | CPU ms | Comprehensiveness (higher better) | Sufficiency (lower better) |
+|---|---|---|---|---|
+| Integrated Gradients | 350 | 564 | 0.335 | 0.021 |
+| LIME (500 samples) | 1,785 | 3,230 | 0.410 | -0.020 |
+| Random words | -- | -- | 0.057 | 0.307 |
+
+- **Speed:** IG is 5.7x faster than LIME on CPU. Prediction alone takes 30 ms on CPU.
+- **Faithfulness:** both explainers are far above random. LIME is somewhat more
+  faithful than IG. That is the speed/faithfulness trade-off the paper argues
+  about, so report it as measured.
+- **IG-LIME top-5 agreement:** 0.699 overall and 0.572 on comments with 10+ words.
+  By language: kn 0.80, bn 0.69, hi 0.68, mr 0.63. This is inside the expected
+  60-80% band (master context Section 3.4).
+- **Word-boundary check:** 10 comments, 87 words, 0 words split incorrectly by the
+  automatic check. Still pending: the native speaker's sign-off in
+  word_boundary_check.csv.
+- **Error-analysis input:** 1,014 Kannada test errors out of 7,170. 20 of them
+  (10 false positives, 10 false negatives) are in error_analysis_kn.csv for Step 12.
+- **Checkpoint check:** the local checkpoint scored test macro-F1 0.8765, against
+  0.8764 in Notebook 2.
 
 **Step 7: IG + LIME benchmark (03_explain_eval.py, Colab T4, ~25 min).**
 Upload fairmod_explain.py to MyDrive/fairmod/code/ once, then run the cells in order.
