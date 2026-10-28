@@ -749,6 +749,8 @@ B1–B5 and the §7.4 open questions. **B1 (native speaker's language) is the mo
 | Version | Date | Author | Change |
 |---|---|---|---|
 | 1.0 | 2026-10-26 | Claude + project lead | Initial consolidation of all project context, decisions, and methodology. Includes verified dataset schemas, confirmed MACD label inversion, class-balance measurements, and the full 72-hour roadmap. |
+| 1.1 | 2026-10-28 | P2 + Claude | Step 4 done: TF-IDF baseline test macro-F1 hi 0.837 / kn 0.844 / mr 0.892 / bn 0.886 (`results/baseline_results.json`). `02_train.py` added for Steps 4–6b. New decisions (no confirmed decision changed): transfer target = Kannada; few-shot sets nested and stratified by source×label; B1–B4 checkpoint selection on non-target val only, so the target never leaks via selection. Warmup = 10% of steps (not specified in §5.2). |
+| 1.2 | 2026-10-28 | P3 + Claude | P3 code added: `fairmod_explain.py`, `03_explain_eval.py`, `app.py`, `test_app.py`, Spaces files. Decisions: raw Captum, not `transformers-interpret` (resolves the §5.1 PROPOSED item, removes an unmaintained dependency). Explainer code lives in one shared module imported by both the notebook and the app, so the benchmark measures the deployed code (the app is still one process, §5.6). Words = whitespace tokens, not regex `\w`, because Indic matras count as non-word characters. Benchmark: 152 test items (19 per language × label), k = top 20% of words, random-word reference. Model reaches the Space via a private HF Hub repo (`MODEL_ID` + `HF_TOKEN`). Finding: MuRIL maps every emoji to `[UNK]`. |
 
 ### Entry template
 

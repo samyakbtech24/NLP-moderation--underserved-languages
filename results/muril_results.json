@@ -1,0 +1,23 @@
+{
+  "overall": 0.8763962106481176,
+  "per_language": {
+    "hi": 0.8623667480056854,
+    "kn": 0.8580620005496489,
+    "mr": 0.9099931860443744,
+    "bn": 0.8995354429661182
+  },
+  "per_source": {
+    "bn/bengali_hs": 0.8995354429661182,
+    "hi/macd": 0.8623667480056854,
+    "kn/dravidian_kn": 0.7882752635613965,
+    "kn/macd": 0.8599656668088067,
+    "mr/mahahate": 0.9099931860443744
+  },
+  "model": "google/muril-base-cased",
+  "run": "muril_pooled",
+  "n_train": 97793,
+  "best_val_macro_f1": 0.8771857378823261,
+  "train_minutes": 27.5,
+  "seed": 42,
+  "checkpoint": "/content/drive/MyDrive/fairmod/checkpoints/muril_pooled/final"
+}

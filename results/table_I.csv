@@ -1,0 +1,8 @@
+language,TF-IDF + LogReg,XLM-R base,MuRIL base
+Hindi,0.8369,0.8592,0.8624
+Kannada,0.8441,0.8544,0.8581
+Marathi,0.8919,0.9049,0.91
+Bengali,0.8864,0.8962,0.8995
+kn/dravidian_kn,0.7817,0.7467,0.7883
+kn/macd,0.8456,0.8588,0.86
+Overall,0.8581,0.8728,0.8764
