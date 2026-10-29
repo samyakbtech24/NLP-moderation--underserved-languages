@@ -190,7 +190,8 @@ Things found while testing, worth a line in the paper:
   Indic vowel signs as non-word characters, so `\w` would cut words in half.
 
 **Step 8: app.py.** One FastAPI process with Gradio mounted at `/`.
-`POST /classify` returns `{label, confidence, word_scores}`. `GET /health` is a
+`POST /classify` returns `{label, confidence, word_scores}`. `POST /bulk`
+ranks many comments by abusive probability (no IG). `GET /health` is a
 status check. `/docs` has the API docs (a free screenshot for the paper).
 Tab 1 shows a single comment with red/blue word highlights. Tab 2 takes a CSV
 upload and ranks the comments. To run locally:
@@ -198,11 +199,43 @@ upload and ranks the comments. To run locally:
 `python test_app.py` runs the checklist edge cases: empty input, 3000
 characters, emoji only, wrong language.
 
+**Local Next.js UI (`web/`):** polished App Router frontend that proxies to the
+FastAPI backend. With the API running on :7860:
+
+```powershell
+cd web
+npm install
+npm run dev
+```
+
+Open http://localhost:3000. Details in `web/README.md`.
+
+**Moderation console (Tier 1, `moderation.py` + `web/app/console/`).** This turns the
+classifier into a moderation workflow, built on what commercial tools offer (Hive's
+rules engine and review queue, Azure Content Safety's blocklists, Checkstep's
+statements of reasons). Open http://localhost:3000/console.
+
+| Page | What it does |
+|---|---|
+| Ingest | Sends one comment, a CSV, or a 32-comment demo stream through the pipeline (`POST /mod/moderate`). |
+| Policies | Threshold presets (Balanced 50/90, Strict 30/70, Lenient 70/97). Exactly one is active. Sliders show an impact preview on everything seen so far. |
+| Block & allow lists | Per-language terms checked before the thresholds. They fix model misses without retraining: e.g. blocklisting ঘেন্না removes a Bengali insult the model scored 3%. |
+| Review queue | Items between the two thresholds. The moderator approves, or removes with a policy category. The page shows the author's prior removals. Keys: A / R / J / K. |
+| Decision log | Every item with status, the rule that fired, and an auto-generated statement of reasons from the IG words. Moderators can override. CSV export. |
+| Dashboard | Volume, automation rate, flag rate per language, model–moderator agreement, median time to decision, and the words most often driving removals. |
+| Audit log | Every human decision and every policy or list change, with actor and time. |
+
+Pipeline order: classify + IG, then blocklist (always wins), then allowlist (allows if every
+high-IG word is allowlisted), then the policy thresholds. Data lives in `data/fairmod.db`
+(SQLite, gitignored; delete it to reset). Language is detected from the script; Hindi and
+Marathi are told apart by common function words. `python test_moderation.py` runs 27
+checks against a fake classifier, without the model.
+
 **Step 10: deploy to HuggingFace Spaces (~45 min).**
 1. Run 03_explain_eval.py Cell 13. It uploads the checkpoint to a private HF
    model repo, e.g. `yourname/fairmod-muril`.
 2. On huggingface.co, create a new Space: SDK Gradio, hardware CPU Basic (free).
-3. Upload `app.py`, `fairmod_explain.py`, `requirements.txt`, and
+3. Upload `app.py`, `fairmod_explain.py`, `moderation.py`, `requirements.txt`, and
    `hf_space_README.md` renamed to `README.md`.
 4. Go to Space settings, Variables and secrets. Add the variable
    `MODEL_ID = yourname/fairmod-muril` and the secret `HF_TOKEN = <read token>`.

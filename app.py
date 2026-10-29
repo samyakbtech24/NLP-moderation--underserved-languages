@@ -2,6 +2,7 @@
 # FairMod — Demo app: FastAPI + Gradio in one process (P3, master §5.6)
 # =============================================================================
 #   POST /classify  {"text": "..."} → {label, confidence, word_scores, ...}
+#   POST /bulk      {"texts": [...]} → ranked [{text, p_abusive, flagged}, ...]
 #   GET  /health    → model + device info
 #   GET  /docs      → auto-generated API docs (screenshot for the paper)
 #   /               → Gradio UI: single comment with word highlights,
@@ -27,13 +28,31 @@ import gradio as gr
 import pandas as pd
 import uvicorn
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from fairmod_explain import FairModExplainer, clean_text, normalise
+from moderation import make_router as make_moderation_router
 
 MODEL_ID     = os.environ.get('MODEL_ID', 'checkpoints/muril_pooled/final')
 MAX_CHARS    = 5000     # hard cap on input size; the model only reads 128 tokens anyway
 MAX_CSV_ROWS = 2000     # CPU Basic Space: keep bulk jobs to well under a minute
+
+# Resolve local folders; Hub ids look like "user/fairmod-muril" (exactly one slash).
+_parts = MODEL_ID.replace('\\', '/').strip('/').split('/')
+_is_hub_id = len(_parts) == 2 and all(_parts) and not _parts[0] in ('.', '..', 'checkpoints')
+if os.path.isdir(MODEL_ID):
+    MODEL_ID = os.path.abspath(MODEL_ID)
+elif not _is_hub_id:
+    raise SystemExit(
+        f"No model checkpoint at '{MODEL_ID}'.\n\n"
+        "The trained MuRIL weights are not in git (~1 GB). Do one of:\n"
+        "  1. Copy the team Drive folder to checkpoints/muril_pooled/final\n"
+        "     (needs config.json, tokenizer files, and model.safetensors / pytorch_model.bin)\n"
+        "  2. Or point at a Hugging Face repo after Cell 13 upload, e.g. in PowerShell:\n"
+        "       $env:MODEL_ID = 'yourname/fairmod-muril'\n"
+        "       python app.py\n"
+    )
 
 explainer = FairModExplainer(MODEL_ID)
 ABUSIVE = explainer.model.config.label2id.get('abusive', 1)
@@ -63,8 +82,18 @@ def classify(text):
 class ClassifyRequest(BaseModel):
     text: str = Field(..., max_length=MAX_CHARS, description="One comment, any of hi / kn / mr / bn")
 
+class BulkRequest(BaseModel):
+    texts: list[str] = Field(..., max_length=MAX_CSV_ROWS, description="Up to 2000 comments to rank")
+
 app = FastAPI(title="FairMod API",
               description="Explainable abusive-comment detection for Hindi, Kannada, Marathi and Bengali.")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post('/classify')
 def classify_endpoint(req: ClassifyRequest):
@@ -73,9 +102,41 @@ def classify_endpoint(req: ClassifyRequest):
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
 
+@app.post('/bulk')
+def bulk_endpoint(req: BulkRequest):
+    """Rank comments by abusive probability (no IG — same path as Gradio CSV tab)."""
+    if not req.texts:
+        raise HTTPException(status_code=422, detail="No texts provided.")
+    cleaned = []
+    for t in req.texts[:MAX_CSV_ROWS]:
+        c = clean_text(t)
+        if c and len(c) <= MAX_CHARS:
+            cleaned.append(c)
+    if not cleaned:
+        raise HTTPException(status_code=422, detail="No non-empty comments found.")
+    probs = explainer.predict_proba(cleaned)
+    rows = []
+    for text, p in zip(cleaned, probs):
+        p_abusive = round(float(p[ABUSIVE]), 4)
+        rows.append({
+            'text': text,
+            'p_abusive': p_abusive,
+            'flagged': p_abusive >= 0.5,
+        })
+    rows.sort(key=lambda r: r['p_abusive'], reverse=True)
+    flagged = sum(1 for r in rows if r['flagged'])
+    return {
+        'results': rows,
+        'flagged': flagged,
+        'total': len(rows),
+    }
+
 @app.get('/health')
 def health():
     return {'status': 'ok', 'model': MODEL_ID, 'device': explainer.device}
+
+# Moderation console (policy engine, review queue, lists, decision log, analytics) — see moderation.py
+app.include_router(make_moderation_router(classify))
 
 
 # ─── Gradio UI ──────────────────────────────────────────────────────────────

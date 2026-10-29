@@ -1,2 +1,16 @@
 # Model checkpoints (~1 GB each) — kept on Google Drive / HF Hub, not in git
 checkpoints/
+
+# Local Python / Node environments
+.venv/
+venv/
+web/node_modules/
+web/.next/
+web/.env*.local
+
+# Moderation console database (local demo data)
+data/
+
+# Python bytecode and local scratch copies of raw datasets
+__pycache__/
+temp/
