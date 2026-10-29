@@ -86,19 +86,11 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
     <Ctx.Provider
       value={{ moderator, setModerator, queueCount, activePolicy, refresh: () => void refresh() }}
     >
-      <div className="shell mx-auto flex min-h-dvh w-full max-w-[90rem] flex-col gap-6 px-4 py-5 sm:px-6 lg:flex-row lg:gap-8 lg:px-8 lg:py-8">
-        <aside className="flex shrink-0 flex-col gap-4 lg:sticky lg:top-8 lg:h-[calc(100dvh-4rem)] lg:w-60">
-          <div className="nb-card flex items-center justify-between gap-3 bg-[var(--ink)] px-4 py-3 text-[var(--paper)] lg:block">
-            <Link href="/console" className="flex items-center gap-2">
-              <span className="display grid h-9 w-9 place-items-center rounded-lg border-[3px] border-[var(--paper)] bg-[var(--coral)] text-lg font-extrabold text-white">
-                F
-              </span>
-              <span className="display text-2xl font-extrabold tracking-tight">FairMod</span>
-            </Link>
-            <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-[var(--sun)] lg:mt-2">
-              Moderation console
-            </p>
-          </div>
+      <div className="shell mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-[90rem] flex-col gap-6 px-4 py-5 sm:px-6 lg:flex-row lg:gap-8 lg:px-8 lg:py-8">
+        <aside className="flex shrink-0 flex-col gap-4 lg:sticky lg:top-24 lg:h-[calc(100dvh-8rem)] lg:w-60">
+          <p className="hidden rounded-lg border-[3px] border-[var(--ink)] bg-[var(--ink)] px-3 py-2 text-[0.65rem] font-extrabold uppercase tracking-[0.24em] text-[var(--paper)] shadow-[3px_3px_0_0_var(--red)] lg:block">
+            Moderation console
+          </p>
 
           <nav
             aria-label="Console"
@@ -128,7 +120,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
                   {n.badge && queueCount ? (
                     <span
                       key={queueCount}
-                      className="stamp ml-auto rounded-md border-2 border-[var(--ink)] bg-[var(--coral)] px-1.5 text-xs tabular-nums text-white"
+                      className="stamp ml-auto rounded-md border-2 border-[var(--ink)] bg-[var(--coral)] px-1.5 text-xs tabular-nums text-[var(--card)]"
                     >
                       {queueCount}
                     </span>
@@ -136,12 +128,6 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
                 </Link>
               );
             })}
-            <Link
-              href="/"
-              className="flex shrink-0 items-center gap-2 rounded-xl border-[3px] border-dashed border-[var(--ink)] px-3 py-2 text-sm font-bold transition-colors hover:bg-[var(--card)] lg:mt-2"
-            >
-              ← Model playground
-            </Link>
           </nav>
 
           <div className="nb-card hidden space-y-3 p-3.5 text-xs lg:mt-auto lg:block">
@@ -158,7 +144,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
               <p className="nb-label">Active policy</p>
               <Link
                 href="/console/policies"
-                className="mt-1 inline-block rounded-md border-2 border-[var(--ink)] bg-[var(--violet-soft)] px-2 py-0.5 text-sm font-bold hover:bg-[var(--violet)] hover:text-white"
+                className="mt-1 inline-block rounded-md border-2 border-[var(--ink)] bg-[var(--violet-soft)] px-2 py-0.5 text-sm font-bold hover:bg-[var(--red)] hover:text-white"
               >
                 {activePolicy?.name ?? "—"}
               </Link>
@@ -184,7 +170,7 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
               className="nb-card reveal mb-6 flex flex-wrap items-center gap-3 !bg-[var(--coral-soft)] px-4 py-3 text-sm font-medium"
               role="status"
             >
-              <span className="nb-tag !bg-[var(--coral)] !text-white">OFFLINE</span>
+              <span className="nb-tag !bg-[var(--coral)] !text-[var(--card)]">OFFLINE</span>
               Backend isn&apos;t answering. Run <code className="font-bold">python app.py</code> in the repo root — this
               page reconnects on its own.
             </div>

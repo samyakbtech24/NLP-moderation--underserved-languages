@@ -6,6 +6,8 @@ import {
   Noto_Sans_Kannada,
   Space_Grotesk,
 } from "next/font/google";
+import { SiteHeader } from "@/components/SiteHeader";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 const display = Bricolage_Grotesque({
@@ -39,10 +41,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body
         className={`${display.variable} ${body.variable} ${deva.variable} ${knda.variable} ${beng.variable} antialiased`}
       >
+        <SiteHeader />
         {children}
       </body>
     </html>

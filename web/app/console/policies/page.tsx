@@ -139,7 +139,7 @@ export default function PoliciesPage() {
               >
                 <span className="flex items-center justify-between gap-2">
                   <span className="text-base font-extrabold">{p.name}</span>
-                  {p.is_active ? <span className="nb-sticker bg-[var(--mint)] text-white">Active</span> : null}
+                  {p.is_active ? <span className="nb-sticker bg-[var(--red)] text-white">Active</span> : null}
                 </span>
                 {p.description && <span className="mt-1 block text-sm font-medium text-[var(--ink-soft)]">{p.description}</span>}
                 <span className="mt-3 block">

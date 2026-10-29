@@ -23,7 +23,7 @@ export function VerdictPanel({ result, filter, onFilterChange }: Props) {
         style={{ background: isAbusive ? "var(--coral)" : "var(--mint)" }}
       >
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/90">Verdict</p>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--card)]">Verdict</p>
           <p
             key={result.label + result.latency_ms}
             className="stamp display mt-2 inline-block rounded-xl border-[3px] border-[var(--ink)] bg-[var(--card)] px-4 py-1 text-4xl font-extrabold uppercase tracking-tight shadow-[4px_4px_0_0_var(--ink)] md:text-5xl"

@@ -42,7 +42,7 @@ export function Workspace() {
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 md:py-12 lg:px-8">
         {apiOnline === false && (
           <div className="nb-card reveal flex flex-wrap items-center gap-3 !bg-[var(--coral-soft)] px-4 py-3 text-sm font-medium" role="status">
-            <span className="nb-tag !bg-[var(--coral)] !text-white">OFFLINE</span>
+            <span className="nb-tag !bg-[var(--coral)] !text-[var(--card)]">OFFLINE</span>
             Backend isn&apos;t answering. Run <code className="font-bold">python app.py</code> in the repo root.
             <button type="button" className="nb-btn nb-btn--sm ml-auto" onClick={() => void refreshHealth()}>
               Check again

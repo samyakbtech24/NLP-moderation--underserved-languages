@@ -145,7 +145,7 @@ export function BulkPanel({ onExplain }: Props) {
         <div className="nb-card reveal overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b-[3px] border-[var(--ink)] bg-[var(--violet-soft)] px-4 py-3 md:px-5">
             <p className="flex flex-wrap items-center gap-2 text-sm font-bold">
-              <span className="nb-tag !bg-[var(--coral)] !text-white">{flagged} flagged</span>
+              <span className="nb-tag !bg-[var(--coral)] !text-[var(--card)]">{flagged} flagged</span>
               of {total}
               {column ? <span className="font-medium text-[var(--ink-muted)]">· column “{column}”</span> : null}
             </p>

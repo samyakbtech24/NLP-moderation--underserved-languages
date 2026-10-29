@@ -71,7 +71,7 @@ export function ActionBadge({ action }: { action: Action }) {
 export function ErrorBox({ children }: { children: ReactNode }) {
   return (
     <div className="nb-card reveal flex items-start gap-3 !bg-[var(--coral-soft)] px-4 py-3 text-sm font-medium" role="alert">
-      <span className="nb-tag !bg-[var(--coral)] !text-white">ERROR</span>
+      <span className="nb-tag !bg-[var(--coral)] !text-[var(--card)]">ERROR</span>
       <div className="min-w-0">{children}</div>
     </div>
   );

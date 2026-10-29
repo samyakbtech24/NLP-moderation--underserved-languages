@@ -33,6 +33,7 @@ from pydantic import BaseModel, Field
 
 from fairmod_explain import FairModExplainer, clean_text, normalise
 from moderation import make_router as make_moderation_router
+from evaluation import make_router as make_evaluation_router
 
 MODEL_ID     = os.environ.get('MODEL_ID', 'checkpoints/muril_pooled/final')
 MAX_CHARS    = 5000     # hard cap on input size; the model only reads 128 tokens anyway
@@ -137,6 +138,13 @@ def health():
 
 # Moderation console (policy engine, review queue, lists, decision log, analytics) — see moderation.py
 app.include_router(make_moderation_router(classify))
+
+# Evaluation bench (labelled bulk testing + metrics) — see evaluation.py and evaluate.py
+def p_abusive_fast(texts):
+    probs = explainer.predict_proba([clean_text(t) or t for t in texts])
+    return [float(p[ABUSIVE]) for p in probs]
+
+app.include_router(make_evaluation_router(classify, p_abusive_fast))
 
 
 # ─── Gradio UI ──────────────────────────────────────────────────────────────

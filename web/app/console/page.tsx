@@ -75,7 +75,7 @@ export default function DashboardPage() {
             Everything flowing through the pipeline under policy{" "}
             <Link
               href="/console/policies"
-              className="rounded-md border-2 border-[var(--ink)] bg-[var(--violet-soft)] px-1.5 font-bold hover:bg-[var(--violet)] hover:text-white"
+              className="rounded-md border-2 border-[var(--ink)] bg-[var(--violet-soft)] px-1.5 font-bold hover:bg-[var(--red)] hover:text-white"
             >
               {a.active_policy?.name}
             </Link>

@@ -231,11 +231,41 @@ high-IG word is allowlisted), then the policy thresholds. Data lives in `data/fa
 Marathi are told apart by common function words. `python test_moderation.py` runs 27
 checks against a fake classifier, without the model.
 
+**Evaluation bench (`evaluation.py`, `evaluate.py`, `web/app/evaluate/`).** A bulk testing
+tool. It runs labelled abusive and normal sentences through the real model and reports how
+well it did. Open http://localhost:3000/evaluate.
+
+- **Test data:** a balanced sample of the frozen test set (N per language × label, chosen
+  languages, a seed), the curated 32 sentences, a CSV upload (`text,label[,language]`), or
+  pasted lines (`abusive | text`).
+- **Live run:** results stream in as each sentence is classified. Every word is coloured by
+  its IG score, and each row shows the original label, FairMod's verdict, the confidence,
+  P(abusive) and ✓/✗.
+- **Scoreboard:** macro-F1, accuracy, per-class P/R/F1, confusion matrix, a per-language
+  table, mean confidence when right vs wrong, and latency.
+- **Results:** filter by correct, wrong, false positive or false negative. Export CSV or JSON,
+  or save a run to the history.
+
+API endpoints: `GET /eval/datasets`, `GET /eval/sample`, `POST /eval/predict` (≤64 items,
+optional IG), `POST /eval/run` (one-shot, up to 2,000 items, returns metrics), and
+`/eval/runs` (save, list, open, delete). From a terminal, with `python app.py` running:
+
+```powershell
+python evaluate.py --sample 25 --save "Viva demo"     # 200 balanced test-set items
+python evaluate.py --csv my_tests.csv --out results.csv
+```
+
+A balanced 400-item sample (50 per language × label, seed 42) scored macro-F1 0.857:
+bn 0.89, mr 0.89, kn 0.84, hi 0.81. `python test_evaluation.py` runs 13 checks without the model.
+
+**UI theme.** Red, black and white, neo-brutalist. A switch in the top bar on every page
+toggles light and dark; the choice is saved, and the OS setting is the default.
+
 **Step 10: deploy to HuggingFace Spaces (~45 min).**
 1. Run 03_explain_eval.py Cell 13. It uploads the checkpoint to a private HF
    model repo, e.g. `yourname/fairmod-muril`.
 2. On huggingface.co, create a new Space: SDK Gradio, hardware CPU Basic (free).
-3. Upload `app.py`, `fairmod_explain.py`, `moderation.py`, `requirements.txt`, and
+3. Upload `app.py`, `fairmod_explain.py`, `moderation.py`, `evaluation.py`, `requirements.txt`, and
    `hf_space_README.md` renamed to `README.md`.
 4. Go to Space settings, Variables and secrets. Add the variable
    `MODEL_ID = yourname/fairmod-muril` and the secret `HF_TOKEN = <read token>`.

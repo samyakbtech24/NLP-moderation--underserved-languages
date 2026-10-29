@@ -90,7 +90,7 @@ export function AnalyzePanel({ seedText, seedNonce, onResult }: Props) {
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
       <div className="space-y-5">
         <div className="nb-card overflow-hidden">
-          <div className="flex items-center justify-between border-b-[3px] border-[var(--ink)] bg-[var(--violet)] px-4 py-2.5 text-white">
+          <div className="flex items-center justify-between border-b-[3px] border-[var(--ink)] bg-[var(--ink)] px-4 py-2.5 text-[var(--paper)]">
             <label htmlFor={labelId} className="text-sm font-bold uppercase tracking-[0.12em]">
               Comment
             </label>
@@ -185,8 +185,8 @@ function EmptyResult() {
       <p className="display text-4xl font-extrabold leading-none">Drop a comment in.</p>
       <p className="mt-3 max-w-sm text-sm font-medium leading-relaxed">
         You&apos;ll get a verdict, a confidence score and every word coloured by how hard it pushed the model —{" "}
-        <mark className="rounded border-2 border-[var(--ink)] bg-[var(--coral-soft)] px-1">coral</mark> toward abusive,{" "}
-        <mark className="rounded border-2 border-[var(--ink)] bg-[var(--mint-soft)] px-1 brightness-95">teal</mark> toward normal.
+        <mark className="rounded border-2 border-[var(--ink)] bg-[var(--coral-soft)] px-1">red</mark> toward abusive,{" "}
+        <mark className="rounded border-2 border-[var(--ink)] bg-[var(--mint-soft)] px-1">gray</mark> toward normal.
       </p>
     </section>
   );

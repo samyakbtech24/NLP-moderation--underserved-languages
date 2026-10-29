@@ -107,7 +107,7 @@ function ListColumn({
         className="flex items-center justify-between gap-3 border-b-[3px] border-[var(--ink)] px-4 py-3"
         style={{ background: kind === "block" ? "var(--coral)" : "var(--mint)" }}
       >
-        <h2 className="display text-2xl font-extrabold text-white">
+        <h2 className="display text-2xl font-extrabold text-[var(--card)]">
           {kind === "block" ? "⛔ " : "✅ "}
           {title}
         </h2>

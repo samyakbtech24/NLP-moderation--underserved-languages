@@ -9,11 +9,13 @@ type Props = {
   onFilterChange: (f: HighlightFilter) => void;
 };
 
-// Coral = pushed toward abusive, teal = pushed toward normal (validated data colours).
-function scoreColor(score: number | null): string {
+// Red = pushed toward abusive, gray = pushed toward normal. Theme-aware via CSS variables.
+export function scoreColor(score: number | null): string {
   if (score === null) return "transparent";
   const t = Math.min(1, Math.abs(score));
-  return score > 0 ? `rgba(229, 67, 43, ${0.14 + t * 0.66})` : `rgba(14, 159, 154, ${0.12 + t * 0.5})`;
+  return score > 0
+    ? `color-mix(in srgb, var(--coral) ${Math.round(14 + t * 66)}%, transparent)`
+    : `color-mix(in srgb, var(--mint) ${Math.round(12 + t * 50)}%, transparent)`;
 }
 
 export function HighlightedText({ words, filter, onFilterChange }: Props) {
