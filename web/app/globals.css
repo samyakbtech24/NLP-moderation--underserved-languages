@@ -1,0 +1,570 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   FairMod — neo-brutalist design system
+   Thick ink borders, hard offset shadows, flat saturated fills, chunky type.
+   Data colours (allow / review / remove) were run through the dataviz
+   palette validator: teal #0E9F9A, amber #D99400, coral #E5432B pass lightness,
+   chroma, CVD and normal-vision checks on white. Amber is < 3:1 on white, so
+   every data mark carries an ink outline and a text label.
+   ========================================================================== */
+
+:root {
+  /* surfaces */
+  --paper: #fff4df;
+  --paper-deep: #f6e6c4;
+  --card: #ffffff;
+
+  /* ink */
+  --ink: #111111;
+  --ink-soft: #2b2b2b;
+  --ink-muted: #5e5546;
+  --line: #111111;
+
+  /* data / status (validated) */
+  --coral: #e5432b;
+  --coral-soft: #ffc9bd;
+  --coral-ink: #a8260f;
+  --mint: #0e9f9a;
+  --mint-soft: #b4f0e6;
+  --mint-ink: #05605d;
+  --amber: #d99400;
+  --amber-soft: #ffe08a;
+  --amber-ink: #6e4a00;
+
+  /* decorative accents (never used to encode data) */
+  --sun: #ffd23f;
+  --violet: #8c6cff;
+  --violet-soft: #dcd2ff;
+  --pink: #ff8fcf;
+  --sky: #7cc8ff;
+
+  /* legacy aliases so older class strings keep working */
+  --vermillion: var(--coral);
+  --vermillion-soft: var(--coral-soft);
+  --teal: var(--mint-ink);
+  --teal-soft: var(--mint-soft);
+  --surface: var(--card);
+  --surface-solid: var(--card);
+
+  --bw: 3px;
+  --radius: 14px;
+  --shadow: 5px 5px 0 0 var(--ink);
+  --shadow-sm: 3px 3px 0 0 var(--ink);
+  --shadow-lg: 8px 8px 0 0 var(--ink);
+  --background: var(--paper);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-coral: var(--coral);
+  --color-mint: var(--mint);
+  --color-amber: var(--amber);
+  --color-sun: var(--sun);
+  --color-violet: var(--violet);
+  --font-display: var(--font-display-face);
+  --font-sans: var(--font-body-face);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(rgba(17, 17, 17, 0.13) 1.2px, transparent 1.3px);
+  background-size: 22px 22px;
+  font-family:
+    var(--font-body-face), var(--font-deva), var(--font-knda), var(--font-beng), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--sun);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--violet);
+  outline-offset: 2px;
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+}
+
+.display {
+  font-family: var(--font-display-face), var(--font-deva), var(--font-knda), var(--font-beng), sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Indic scripts read better with the Noto faces first. */
+.indic {
+  font-family: var(--font-deva), var(--font-knda), var(--font-beng), var(--font-body-face), sans-serif;
+}
+
+/* Component classes live in the components layer so Tailwind utilities
+   (bg-*, p-*, shadow-*) on the same element still win. */
+@layer components {
+/* ─── Cards ─────────────────────────────────────────────────────────────── */
+
+.nb-card,
+.surface {
+  background: var(--card);
+  border: var(--bw) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.nb-card--lift {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.nb-card--lift:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ─── Buttons ───────────────────────────────────────────────────────────── */
+
+.nb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: var(--bw) solid var(--ink);
+  border-radius: 10px;
+  padding: 0.6rem 1.1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  color: var(--ink);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background-color 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+.nb-btn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 0 var(--ink);
+}
+.nb-btn:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 0 var(--ink);
+}
+.nb-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  box-shadow: none;
+}
+.nb-btn--sm {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+  border-width: 2px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0 0 var(--ink);
+}
+.nb-btn--ink {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 3px 3px 0 0 var(--violet);
+}
+.nb-btn--ink:hover:not(:disabled) {
+  box-shadow: 5px 5px 0 0 var(--violet);
+}
+.nb-btn--sun {
+  background: var(--sun);
+}
+.nb-btn--coral {
+  background: var(--coral);
+  color: #fff;
+}
+.nb-btn--mint {
+  background: var(--mint);
+  color: #fff;
+}
+.nb-btn--violet {
+  background: var(--violet);
+  color: #fff;
+}
+.nb-btn--pink {
+  background: var(--pink);
+}
+
+/* ─── Inputs ────────────────────────────────────────────────────────────── */
+
+.nb-input {
+  width: 100%;
+  border: var(--bw) solid var(--ink);
+  border-radius: 10px;
+  background: var(--card);
+  padding: 0.55rem 0.8rem;
+  font-size: 0.92rem;
+  color: var(--ink);
+  outline: none;
+  transition:
+    box-shadow 0.12s ease,
+    transform 0.12s ease;
+}
+.nb-input::placeholder {
+  color: #8a8172;
+}
+.nb-input:focus {
+  box-shadow: 4px 4px 0 0 var(--violet);
+  transform: translate(-1px, -1px);
+}
+select.nb-input {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+    linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 55%,
+    calc(100% - 12px) 55%;
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+.nb-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+
+input[type="range"].nb-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 14px;
+  background: var(--card);
+  border: var(--bw) solid var(--ink);
+  border-radius: 999px;
+  cursor: pointer;
+}
+input[type="range"].nb-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--sun);
+  border: var(--bw) solid var(--ink);
+  box-shadow: 2px 2px 0 0 var(--ink);
+  transition: transform 0.12s ease;
+}
+input[type="range"].nb-range::-webkit-slider-thumb:hover {
+  transform: scale(1.12) rotate(-6deg);
+}
+input[type="range"].nb-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  background: var(--sun);
+  border: var(--bw) solid var(--ink);
+}
+
+/* ─── Tags, stickers, kbd ───────────────────────────────────────────────── */
+
+.nb-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 2px solid var(--ink);
+  border-radius: 7px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+  background: var(--card);
+  color: var(--ink);
+}
+
+.nb-sticker {
+  display: inline-block;
+  border: var(--bw) solid var(--ink);
+  border-radius: 10px;
+  padding: 0.2rem 0.65rem;
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  box-shadow: var(--shadow-sm);
+  transform: rotate(-3deg);
+}
+
+kbd {
+  display: inline-block;
+  min-width: 1.4em;
+  border: 2px solid var(--ink);
+  border-bottom-width: 4px;
+  border-radius: 6px;
+  padding: 0 0.3em;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.75em;
+  text-align: center;
+  background: var(--card);
+}
+
+/* ─── Tables ────────────────────────────────────────────────────────────── */
+
+.nb-table th {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  background: var(--sun);
+  border-bottom: var(--bw) solid var(--ink);
+}
+.nb-table td {
+  border-bottom: 2px solid var(--ink);
+}
+.nb-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ─── Word highlights (IG) ──────────────────────────────────────────────── */
+
+.word-hl {
+  display: inline-block;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  padding: 0 0.22em;
+  margin: 0.12em 0.04em;
+  transition:
+    transform 0.15s ease,
+    opacity 0.25s ease,
+    box-shadow 0.15s ease;
+  cursor: pointer;
+  animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.word-hl.is-hot {
+  border-color: var(--ink);
+}
+.word-hl:hover,
+.word-hl:focus-visible {
+  outline: none;
+  transform: translate(-1px, -2px) rotate(-1.5deg);
+  border-color: var(--ink);
+  box-shadow: 2px 2px 0 0 var(--ink);
+}
+.word-hl.is-dim {
+  opacity: 0.25;
+}
+} /* end @layer components */
+
+/* ─── Motion ────────────────────────────────────────────────────────────── */
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes stamp {
+  0% {
+    opacity: 0;
+    transform: scale(2.2) rotate(-14deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.94) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1) rotate(-4deg);
+  }
+}
+
+@keyframes bar-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes bar-rise {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(14, 159, 154, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(14, 159, 154, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translateY(-8px) rotate(var(--r, 0deg));
+  }
+}
+
+.reveal {
+  animation: reveal-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger > * {
+  animation: reveal-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; }
+.stagger > *:nth-child(5) { animation-delay: 240ms; }
+.stagger > *:nth-child(6) { animation-delay: 300ms; }
+.stagger > *:nth-child(n + 7) { animation-delay: 340ms; }
+
+.stamp {
+  animation: stamp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.pop-num {
+  animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.bar-fill {
+  transform-origin: left center;
+  animation: bar-fill 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.bar-rise {
+  transform-origin: bottom center;
+  animation: bar-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.wiggle-hover:hover {
+  animation: wiggle 0.35s ease-in-out 2;
+}
+.float {
+  animation: float 4s ease-in-out infinite;
+}
+.live-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  border: 2px solid var(--ink);
+  background: var(--mint);
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+.marquee {
+  overflow: hidden;
+  border-block: var(--bw) solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f3e8d2 25%, #fff8ea 37%, #f3e8d2 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.2s ease infinite;
+  border: var(--bw) solid var(--ink);
+  border-radius: var(--radius);
+}
+
+.sticky-cta {
+  position: sticky;
+  bottom: 0.75rem;
+  z-index: 20;
+}
+
+@media (min-width: 768px) {
+  .sticky-cta {
+    position: static;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
